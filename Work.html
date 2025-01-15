@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Quiz</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fdf1f1;
+            text-align: center;
+            padding: 50px;
+            background-image: url('https://example.com/background.jpg');
+            background-size: cover;
+            color: #ff4b5c;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #ff4b5c;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            padding: 15px 30px;
+            background-color: #ff4b5c;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #e04348;
+        }
+
+        .question-container {
+            display: none;
+            margin: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #final-message {
+            display: none;
+            font-size: 30px;
+            font-weight: bold;
+            color: #ff4b5c;
+            margin-top: 30px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .heart-icon {
+            font-size: 50px;
+            color: #ff4b5c;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .question-img {
+            width: 200px;
+            margin: 20px;
+            border-radius: 10px;
+            border: 3px solid #ff4b5c;
+        }
+
+        .timer {
+            font-size: 20px;
+            color: #ff4b5c;
+            margin-bottom: 10px;
+        }
+
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        @keyframes confetti {
+            0% { opacity: 1; transform: translateY(-50px); }
+            100% { opacity: 0; transform: translateY(500px); }
+        }
+
+        .confetti-piece {
+            position: absolute;
+            background-color: #ff4b5c;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear infinite;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Valentine's Day Quiz</h1>
+<p>Let's see how well you know us!</p>
+<button class="button" onclick="startGame()">Start Quiz</button>
+
+<!-- Question 1 -->
+<div id="question-1" class="question-container">
+    <div class="timer" id="timer">Time Left: 10s</div>
+    <img src="https://example.com/question1.jpg" class="question-img" alt="Question 1">
+    <p>What's my favorite color?</p>
+    <button class="button" onclick="checkAnswer(1, 'blue')">Blue</button>
+    <button class="button" onclick="checkAnswer(1, 'red')">Red</button>
+    <button class="button" onclick="checkAnswer(1, 'green')">Green</button>
+</div>
+
+<!-- Question 2 -->
+<div id="question-2" class="question-container">
+    <div class="timer" id="timer">Time Left: 10s</div>
+    <img src="https://example.com/question2.jpg" class="question-img" alt="Question 2">
+    <p>What is my favorite activity</p>
+    <button class="button" onclick="checkAnswer(2, 'dinner')">Dinner</button>
+    <button class="button" onclick="checkAnswer(2, 'movie')">Movie</button>
+    <button class="button" onclick="checkAnswer(2, 'park')">Park</button>
+</div>
+
+<!-- Final Message -->
+<div id="final-message">
+    <p class="heart-icon">💖</p>
+    <p>Will you be my Valentine?</p>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+    let score = 0;
+    let currentQuestion = 1;
+    let timeLeft = 10;
+    let timer;
+
+    function startGame() {
+        document.querySelector('button').style.display = 'none';
+        showQuestion(currentQuestion);
+        startTimer();
+    }
+
+    function startTimer() {
+        timer = setInterval(function() {
+            timeLeft--;
+            document.getElementById('timer').innerText = `Time Left: ${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                moveToNextQuestion();
+            }
+        }, 1000);
+    }
+
+    function showQuestion(questionNumber) {
+        const question = document.getElementById(`question-${questionNumber}`);
+        if (question) {
+            question.style.display = 'block';
+        }
+    }
+
+    function checkAnswer(questionNumber, answer) {
+        let correctAnswers = {
+            1: 'blue',
+            2: 'dinner'
+        };
+
+        if (answer === correctAnswers[questionNumber]) {
+            score++;
+        }
+
+        moveToNextQuestion();
+    }
+
+    function moveToNextQuestion() {
+        const current = document.getElementById(`question-${currentQuestion}`);
+        if (current) current.style.display = 'none';
+
+        currentQuestion++;
+
+        if (currentQuestion <= 2) {
+            showQuestion(currentQuestion);
+            resetTimer();
+        } else {
+            showFinalMessage();
+        }
+    }
+
+    function resetTimer() {
+        timeLeft = 10;
+        clearInterval(timer);
+        startTimer();
+    }
+
+    function showFinalMessage() {
+        const finalMessage = document.getElementById('final-message');
+        finalMessage.style.display = 'block';
+
+        if (score >= 2) {
+            displayConfetti();
+        }
+    }
+
+    function displayConfetti() {
+        for (let i = 0; i < 100; i++) {
+            let confettiPiece = document.createElement('div');
+            confettiPiece.classList.add('confetti-piece');
+            confettiPiece.style.left = Math.random() * 100 + '%';
+            confettiPiece.style.animationDelay = Math.random() * 5 + 's';
+            confettiPiece.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.getElementById('confetti').appendChild(confettiPiece);
+        }
+    }
+</script>
+
+</body>
+</html>
